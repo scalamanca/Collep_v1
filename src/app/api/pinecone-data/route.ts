@@ -5,7 +5,7 @@ export async function GET() {
   const PINECONE_FILES_URL = process.env.PINECONE_FILES_URL;
 
   if (!PINECONE_API_KEY || !PINECONE_FILES_URL) {
-    console.error('Missing environment variables: NEXT_PUBLIC_PINECONE_API_KEY or NEXT_PUBLIC_PINECONE_FILES_URL');
+    console.error('Missing environment variables: PINECONE_API_KEY or PINECONE_FILES_URL');
     return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
   }
 
