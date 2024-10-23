@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
             },
             body: JSON.stringify({
                 messages,
-                stream: true,
+                stream: false,
                 model: "gpt-4o" 
             }),
         });
