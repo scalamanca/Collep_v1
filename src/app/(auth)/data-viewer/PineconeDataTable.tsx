@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChevronLeft, ChevronRight, Search, Trash2 } from 'lucide-react'
@@ -10,7 +10,6 @@ import { ChevronLeft, ChevronRight, Search, Trash2 } from 'lucide-react'
 interface FileData {
   name: string
   updated_on: string
-  [key: string]: any
 }
 
 interface PineconeDataTableProps {

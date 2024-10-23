@@ -5,11 +5,21 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
 import PineconeDataTable from './PineconeDataTable';
 
+// Match the interface from PineconeDataTable
+interface FileData {
+  name: string;
+  updated_on: string;
+}
+
+interface PineconeData {
+  files: FileData[];
+}
+
 const DataViewerPage = () => {
   const { isLoaded, userId } = useAuth();
   const router = useRouter();
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState<PineconeData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoaded && !userId) {
