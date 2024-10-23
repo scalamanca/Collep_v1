@@ -2,7 +2,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 
-// app/api/chat/route.ts
 export async function POST(req: NextRequest) {
     try {
         // Check authentication
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({
                 messages,
                 stream: false,
-                model: "gpt-4"  // Note: fixed typo from "gpt-4o" to "gpt-4"
+                model: "gpt-4o" 
             }),
         });
 
