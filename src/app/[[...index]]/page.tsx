@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { SignIn, useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Home() {
   const { isSignedIn } = useAuth();
@@ -15,14 +16,21 @@ export default function Home() {
   }, [isSignedIn, router]);
 
   if (isSignedIn) {
-    return null; // or a loading spinner
+    return null;
   }
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Left side - Placeholder */}
+      {/* Left side - Image */}
       <div className="w-1/2 hidden md:flex items-center justify-center bg-gray-200">
-        <span className="text-4xl font-bold text-gray-500">Your App Image</span>
+        <Image 
+          src="/CTAC.jpg"  // Make sure extension matches your file (.jpg)
+          alt="Welcome to our platform"
+          width={800}
+          height={800}
+          priority
+          className="object-cover w-full h-full"  // This will make it cover the entire left side
+        />
       </div>
 
       {/* Right side - Sign In */}
