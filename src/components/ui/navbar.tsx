@@ -18,7 +18,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Link href="/" className="text-2xl font-semibold" style={{ color: '#000000' }}>
-              Scalamanca
+              Collep
             </Link>
           </div>
           <div className="hidden md:flex md:items-center md:space-x-6">
