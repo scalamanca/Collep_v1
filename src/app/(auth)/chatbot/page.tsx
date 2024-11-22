@@ -100,30 +100,28 @@ const ChatbotPage = () => {
             const userMessage: Message = { role: 'user', content: input };
             setMessages(prev => [...prev, userMessage]);
             setInput('');
-
+    
             try {
-                const protocol = window.location.protocol;
-                const host = window.location.host;
-                const response = await fetch(`${protocol}//${host}/api/chat`, {
+                const response = await fetch('http://localhost:5001/analyze', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        messages: [userMessage]
+                        question: input
                     }),
                 });
-
+    
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to send message');
+                    throw new Error(errorData.detail || 'Failed to send message');
                 }
-
+    
                 const data = await response.json();
                 const botMessage: Message = {
                     role: 'bot',
-                    content: data.message.content,
-                    citations: data.citations || []
+                    content: data.response,
+                    citations: [] // Your API doesn't currently return citations
                 };
                 setMessages(prev => [...prev, botMessage]);
             } catch (error) {

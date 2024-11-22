@@ -27,9 +27,6 @@ export default function Navbar() {
                 <Link href="/chatbot">Chat</Link>
               </Button>
               <Button variant="ghost" asChild>
-                <Link href="/file-sender">Upload</Link>
-              </Button>
-              <Button variant="ghost" asChild>
                 <Link href="/data-viewer">Data</Link>
               </Button>
             </SignedIn>
