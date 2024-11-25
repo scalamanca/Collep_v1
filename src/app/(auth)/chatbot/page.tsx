@@ -102,7 +102,7 @@ const ChatbotPage = () => {
             setInput('');
     
             try {
-                const response = await fetch('http://localhost:5001/analyze', {
+                const response = await fetch('https://scalamanca.pythonanywhere.com/analyze', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
