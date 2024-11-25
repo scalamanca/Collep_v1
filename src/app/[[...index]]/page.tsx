@@ -24,7 +24,7 @@ export default function Home() {
       {/* Left side - Image */}
       <div className="w-1/2 hidden md:flex items-center justify-center bg-gray-200">
         <Image 
-          src="/CTAC.jpg"  // Make sure extension matches your file (.jpg)
+          src="/landing.jpg"  // Make sure extension matches your file (.jpg)
           alt="Welcome to our platform"
           width={800}
           height={800}
