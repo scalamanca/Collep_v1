@@ -92,6 +92,7 @@ const ChatbotPage = () => {
         );
     }
 
+    
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (input.trim() && !isLoading) {
