@@ -14,21 +14,18 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 interface Message {
   role: 'user' | 'bot';
   content: string;
-  citations?: Citation[];
+  code?: string;
+  raw_results?: string | null;
 }
 
-interface Citation {
-  references: Reference[];
+interface ApiResponse {
+  code: string;
+  formatted_results: string;
+  raw_results: string | null;
+  success: boolean;
 }
 
-interface Reference {
-  file: {
-    name: string;
-  };
-  pages: number[];
-}
-
-const FormattedMessage: React.FC<{ content: string }> = ({ content }) => {
+const FormattedMessage: React.FC<{ content: string; code?: string }> = ({ content, code }) => {
   const formatContent = (text: string) => {
     return text.split('\n').map((paragraph: string, index: number) => {
       if (paragraph.trim().startsWith('•') || paragraph.trim().startsWith('-')) {
@@ -52,6 +49,13 @@ const FormattedMessage: React.FC<{ content: string }> = ({ content }) => {
   return (
     <div className="prose max-w-none dark:prose-invert">
       {formatContent(content)}
+      {code && (
+        <div className="mt-4">
+          <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto">
+            <code>{code}</code>
+          </pre>
+        </div>
+      )}
     </div>
   );
 };
@@ -92,7 +96,6 @@ const ChatbotPage = () => {
         );
     }
 
-    
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (input.trim() && !isLoading) {
@@ -118,11 +121,12 @@ const ChatbotPage = () => {
                     throw new Error(errorData.detail || 'Failed to send message');
                 }
     
-                const data = await response.json();
+                const data: ApiResponse = await response.json();
                 const botMessage: Message = {
                     role: 'bot',
-                    content: data.response,
-                    citations: [] // Your API doesn't currently return citations
+                    content: data.formatted_results,
+                    code: data.code,
+                    raw_results: data.raw_results
                 };
                 setMessages(prev => [...prev, botMessage]);
             } catch (error) {
@@ -160,34 +164,10 @@ const ChatbotPage = () => {
                                                     {message.role === 'user' ? (
                                                         <p className="text-sm">{message.content}</p>
                                                     ) : (
-                                                        <FormattedMessage content={message.content} />
+                                                        <FormattedMessage content={message.content} code={message.code} />
                                                     )}
                                                 </CardContent>
                                             </Card>
-                                            {message.citations && message.citations.length > 0 && (
-                                                <Collapsible className="w-full mt-2">
-                                                    <CollapsibleTrigger className="flex items-center justify-between w-full p-2 text-sm text-left text-gray-500 border border-gray-200 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none">
-                                                        <span>View Citations</span>
-                                                        <ChevronDown className="w-4 h-4" />
-                                                    </CollapsibleTrigger>
-                                                    <CollapsibleContent className="mt-2">
-                                                        <Card className="border border-gray-200">
-                                                            <CardContent className="p-2">
-                                                                <ul className="space-y-1 text-sm">
-                                                                    {message.citations.map((citation, citationIndex) => (
-                                                                        citation.references.map((ref, refIndex) => (
-                                                                            <li key={`${citationIndex}-${refIndex}`} className="flex items-start">
-                                                                                <span className="mr-2">•</span>
-                                                                                <span>{ref.file.name} (Pages: {ref.pages.join(', ')})</span>
-                                                                            </li>
-                                                                        ))
-                                                                    ))}
-                                                                </ul>
-                                                            </CardContent>
-                                                        </Card>
-                                                    </CollapsibleContent>
-                                                </Collapsible>
-                                            )}
                                         </div>
                                     </motion.div>
                                 ))}
