@@ -3,13 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
-import { Send, ChevronDown, Loader } from 'lucide-react';
+import { Send, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface Message {
   role: 'user' | 'bot';
