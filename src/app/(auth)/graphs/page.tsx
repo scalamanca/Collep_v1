@@ -7,7 +7,7 @@ import { Send, Loader } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     LineChart, Line, BarChart, Bar, PieChart, Pie,
@@ -15,7 +15,7 @@ import {
     ResponsiveContainer, Cell
 } from 'recharts';
 
-// Type definitions
+// Enhanced type definitions
 interface Message {
     role: 'user' | 'bot';
     content: string;
@@ -30,10 +30,19 @@ interface ApiResponse {
     success: boolean;
 }
 
+interface DataItem {
+    name: string;
+    value: number;
+}
+
 interface VisualizationData {
-    type: string;
-    data: any[];
-    options?: any;
+    type: 'line' | 'bar' | 'pie';  // Restrict to supported types
+    data: DataItem[];
+    options?: {
+        colors?: string[];
+        seriesName?: string;
+        yAxisLabel?: string;
+    };
 }
 
 interface FormattedMessageProps {
@@ -46,9 +55,7 @@ interface ChartComponentProps {
     visualizationData: VisualizationData;
 }
 
-interface DataPoint {
-    name: string;
-    value: number;
+interface DataPoint extends DataItem {
     color?: string;
 }
 
@@ -67,12 +74,12 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
         return colors[index % colors.length];
     };
 
-    const transformData = (inputData: any[]): DataPoint[] => {
+    const transformData = (inputData: DataItem[]): DataPoint[] => {
         if (!inputData || !Array.isArray(inputData)) return [];
         
         return inputData.map((item, index) => ({
             name: item.name || '',
-            value: parseFloat(item.value || 0),
+            value: parseFloat(String(item.value || 0)),
             color: getColor(index)
         }));
     };
@@ -169,9 +176,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
                         <Legend wrapperStyle={{ paddingTop: '20px' }}/>
                     </PieChart>
                 );
-
-            default:
-                return <div>Unsupported chart type: {type}</div>;
         }
     };
 
@@ -264,7 +268,7 @@ const GraphPage: React.FC = () => {
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
+                    const errorData: { detail: string } = await response.json();
                     throw new Error(errorData.detail || 'Failed to send message');
                 }
 
@@ -276,12 +280,12 @@ const GraphPage: React.FC = () => {
                     visualization_data: data.visualization_data
                 };
                 setMessages(prev => [...prev, botMessage]);
-            } catch (error) {
-                console.error('Error:', error);
-                setError(error instanceof Error ? error.message : String(error));
+            } catch (err) {
+                const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred';
+                setError(errorMessage);
                 setMessages(prev => [...prev, {
                     role: 'bot',
-                    content: 'Sorry, there was an error processing your message. Please try again.'
+                    content: `Sorry, there was an error: ${errorMessage}. Please try again.`
                 }]);
             } finally {
                 setIsLoading(false);
@@ -292,6 +296,11 @@ const GraphPage: React.FC = () => {
     return (
         <div className="container mx-auto p-4 h-[calc(100vh-4rem)] bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
             <Card className="h-full flex flex-col max-w-6xl mx-auto shadow-lg border-0">
+                {error && (
+                    <div className="p-4 bg-red-100 text-red-700">
+                        {error}
+                    </div>
+                )}
                 <CardContent className="flex-1 p-0">
                     <ScrollArea className="h-[calc(100vh-12rem)]">
                         <div className="p-6 space-y-6">
