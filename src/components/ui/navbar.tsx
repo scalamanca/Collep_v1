@@ -27,6 +27,9 @@ export default function Navbar() {
                 <Link href="/chatbot">Chat</Link>
               </Button>
               <Button variant="ghost" asChild>
+                <Link href="/graphs">Graphs</Link>
+              </Button>
+              <Button variant="ghost" asChild>
                 <Link href="/data-viewer">Data</Link>
               </Button>
             </SignedIn>
@@ -55,10 +58,13 @@ export default function Navbar() {
                       <Link href="/chatbot">Chat</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/file-sender">Upload</Link>
+                      <Link href="/graphs">Graphs</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/data-viewer">Data</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/file-sender">Upload</Link>
                     </DropdownMenuItem>
                   </SignedIn>
                 </DropdownMenuContent>

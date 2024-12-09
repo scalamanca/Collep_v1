@@ -17,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Your App",
-  description: "Your app description",
+  title: "Collep | Instant Insights",
+  description: "Collep assists you in transforming your financial data into actionable insights, empowering smarter business decisions",
 };
 
 const ConditionalNavbar = dynamic(() => import('@/components/ui/ConditionalNavbar'), { ssr: false })
