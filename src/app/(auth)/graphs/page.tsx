@@ -11,20 +11,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     LineChart, Line, BarChart, Bar, PieChart, Pie,
-    XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+    XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Cell
 } from 'recharts';
 
-// Enhanced type definitions
 interface Message {
     role: 'user' | 'bot';
     content: string;
-    code?: string;
     visualization_data?: VisualizationData;
 }
 
 interface ApiResponse {
-    code: string;
     visualization_data: VisualizationData;
     formatted_results: string;
     success: boolean;
@@ -36,7 +33,7 @@ interface DataItem {
 }
 
 interface VisualizationData {
-    type: 'line' | 'bar' | 'pie';  // Restrict to supported types
+    type: 'line' | 'bar' | 'pie';
     data: DataItem[];
     options?: {
         colors?: string[];
@@ -47,7 +44,6 @@ interface VisualizationData {
 
 interface FormattedMessageProps {
     content: string;
-    code?: string;
     visualization_data?: VisualizationData;
 }
 
@@ -59,11 +55,9 @@ interface DataPoint extends DataItem {
     color?: string;
 }
 
-// Chart component with proper types
 const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) => {
     const { type, data, options } = visualizationData;
 
-    // Default color palette
     const defaultColors = [
         "#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#a4de6c",
         "#d0ed57", "#83a6ed", "#8dd1e1", "#a4add3", "#d0c1f3"
@@ -91,8 +85,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
             margin: { top: 20, right: 30, left: 40, bottom: 60 }
         };
 
-        const defaultSeriesName = options?.seriesName || 'Value';
-
         switch (type) {
             case 'line':
                 return (
@@ -106,18 +98,9 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
                             interval={0}
                             tick={{ fontSize: 12 }}
                         />
-                        <YAxis 
-                            label={{ 
-                                value: options?.yAxisLabel || defaultSeriesName,
-                                angle: -90,
-                                position: 'insideLeft',
-                                style: { textAnchor: 'middle' }
-                            }}
-                        />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }}/>
                         <Line
-                            name={defaultSeriesName}
                             type="monotone"
                             dataKey="value"
                             stroke={transformedData[0]?.color || defaultColors[0]}
@@ -138,17 +121,9 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
                             interval={0}
                             tick={{ fontSize: 12 }}
                         />
-                        <YAxis 
-                            label={{ 
-                                value: options?.yAxisLabel || defaultSeriesName,
-                                angle: -90,
-                                position: 'insideLeft',
-                                style: { textAnchor: 'middle' }
-                            }}
-                        />
+                        <YAxis tick={{ fontSize: 12 }} />
                         <Tooltip />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }}/>
-                        <Bar name={defaultSeriesName} dataKey="value">
+                        <Bar dataKey="value">
                             {transformedData.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={entry.color} />
                             ))}
@@ -173,7 +148,6 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
                             ))}
                         </Pie>
                         <Tooltip />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }}/>
                     </PieChart>
                 );
         }
@@ -188,10 +162,15 @@ const ChartComponent: React.FC<ChartComponentProps> = ({ visualizationData }) =>
     );
 };
 
-// Message formatting component with proper types
-const FormattedMessage: React.FC<FormattedMessageProps> = ({ content, code, visualization_data }) => {
+const FormattedMessage: React.FC<FormattedMessageProps> = ({ content, visualization_data }) => {
     return (
         <div className="prose max-w-none dark:prose-invert w-full">
+            {visualization_data && (
+                <div className="mb-4 w-full">
+                    <ChartComponent visualizationData={visualization_data} />
+                </div>
+            )}
+            
             <div className="text-sm space-y-2">
                 {content.split('\n').map((paragraph: string, index: number) => (
                     paragraph.trim() && (
@@ -199,25 +178,10 @@ const FormattedMessage: React.FC<FormattedMessageProps> = ({ content, code, visu
                     )
                 ))}
             </div>
-            
-            {visualization_data && (
-                <div className="mt-4 w-full">
-                    <ChartComponent visualizationData={visualization_data} />
-                </div>
-            )}
-            
-            {code && (
-                <div className="mt-4 w-full">
-                    <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto text-xs">
-                        <code>{code}</code>
-                    </pre>
-                </div>
-            )}
         </div>
     );
 };
 
-// Main page component
 const GraphPage: React.FC = () => {
     const { isLoaded, userId } = useAuth();
     const router = useRouter();
@@ -276,7 +240,6 @@ const GraphPage: React.FC = () => {
                 const botMessage: Message = {
                     role: 'bot',
                     content: data.formatted_results,
-                    code: data.code,
                     visualization_data: data.visualization_data
                 };
                 setMessages(prev => [...prev, botMessage]);
@@ -322,7 +285,6 @@ const GraphPage: React.FC = () => {
                                                     ) : (
                                                         <FormattedMessage
                                                             content={message.content}
-                                                            code={message.code}
                                                             visualization_data={message.visualization_data}
                                                         />
                                                     )}
