@@ -257,7 +257,7 @@ const GraphPage: React.FC = () => {
             setInput('');
 
             try {
-                const response = await fetch('http://127.0.0.1:5000/graphs', {
+                const response = await fetch('https://scalamanca.pythonanywhere.com/graphs', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
