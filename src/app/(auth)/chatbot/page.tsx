@@ -13,7 +13,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface Message {
   role: 'user' | 'bot';
   content: string;
-  code?: string;
   raw_results?: string | null;
 }
 
@@ -24,7 +23,7 @@ interface ApiResponse {
   success: boolean;
 }
 
-const FormattedMessage: React.FC<{ content: string; code?: string }> = ({ content, code }) => {
+const FormattedMessage: React.FC<{ content: string }> = ({ content }) => {
   const formatContent = (text: string) => {
     return text.split('\n').map((paragraph: string, index: number) => {
       if (paragraph.trim().startsWith('•') || paragraph.trim().startsWith('-')) {
@@ -48,13 +47,6 @@ const FormattedMessage: React.FC<{ content: string; code?: string }> = ({ conten
   return (
     <div className="prose max-w-none dark:prose-invert">
       {formatContent(content)}
-      {code && (
-        <div className="mt-4">
-          <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded-md overflow-x-auto">
-            <code>{code}</code>
-          </pre>
-        </div>
-      )}
     </div>
   );
 };
@@ -124,7 +116,6 @@ const ChatbotPage = () => {
                 const botMessage: Message = {
                     role: 'bot',
                     content: data.formatted_results,
-                    code: data.code,
                     raw_results: data.raw_results
                 };
                 setMessages(prev => [...prev, botMessage]);
@@ -163,7 +154,7 @@ const ChatbotPage = () => {
                                                     {message.role === 'user' ? (
                                                         <p className="text-sm">{message.content}</p>
                                                     ) : (
-                                                        <FormattedMessage content={message.content} code={message.code} />
+                                                        <FormattedMessage content={message.content} />
                                                     )}
                                                 </CardContent>
                                             </Card>
