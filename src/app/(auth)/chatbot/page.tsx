@@ -24,32 +24,62 @@ interface ApiResponse {
 }
 
 const FormattedMessage: React.FC<{ content: string }> = ({ content }) => {
-  const formatContent = (text: string) => {
-    return text.split('\n').map((paragraph: string, index: number) => {
-      if (paragraph.trim().startsWith('•') || paragraph.trim().startsWith('-')) {
+    const formatContent = (text: string) => {
+      return text.split('\n').map((paragraph: string, index: number) => {
+        // Handle bullet points
+        if (paragraph.trim().startsWith('•') || paragraph.trim().startsWith('-')) {
+          return (
+            <li key={index} className="ml-6 mb-2">
+              {formatBoldText(paragraph.trim().substring(1).trim())}
+            </li>
+          );
+        }
+        
+        // Handle numbered points
+        if (paragraph.trim().match(/^\d+\./)) {
+          return (
+            <p key={index} className="font-semibold mt-4 mb-2">
+              {formatBoldText(paragraph.trim())}
+            </p>
+          );
+        }
+        
+        // Handle regular paragraphs
         return (
-          <li key={index} className="ml-6 mb-2">
-            {paragraph.trim().substring(1).trim()}
-          </li>
-        );
-      }
-      if (paragraph.trim().match(/^\d+\./)) {
-        return (
-          <p key={index} className="font-semibold mt-4 mb-2">
-            {paragraph.trim()}
+          <p key={index} className="mb-4">
+            {formatBoldText(paragraph.trim())}
           </p>
         );
-      }
-      return <p key={index} className="mb-4">{paragraph.trim()}</p>;
-    });
+      });
+    };
+  
+    // New function to handle bold text formatting
+    const formatBoldText = (text: string) => {
+      // Split the text by bold markers (**) but keep the markers in the result
+      const parts = text.split(/(\*\*.*?\*\*)/g);
+      
+      return parts.map((part, index) => {
+        // Check if this part is wrapped in bold markers
+        if (part.startsWith('**') && part.endsWith('**')) {
+          // Remove the markers and wrap in bold element
+          const boldText = part.slice(2, -2);
+          return (
+            <span key={index} className="font-bold">
+              {boldText}
+            </span>
+          );
+        }
+        // Return regular text as is
+        return part;
+      });
+    };
+  
+    return (
+      <div className="prose max-w-none dark:prose-invert">
+        {formatContent(content)}
+      </div>
+    );
   };
-
-  return (
-    <div className="prose max-w-none dark:prose-invert">
-      {formatContent(content)}
-    </div>
-  );
-};
 
 const ChatbotPage = () => {
     const { isLoaded, userId } = useAuth();
